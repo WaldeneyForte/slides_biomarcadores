@@ -419,6 +419,24 @@
         interpretation: "Controles podem ter nenhuma ou poucas micro-hemorragias, especialmente dependendo da idade. Na Doença de Alzheimer (DA) com componente vascular ou angiopatia amiloide, a contagem pode subir. Pode aparecer ao longo do envelhecimento e em fases sintomáticas; também é importante para segurança em terapias anti-amiloide. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; vascular. Limitações: hipertensão, anticoagulação, doença vascular, trauma, idade, qualidade da sequência e critérios de leitura.",
         notes: "Explicação simples: São pequenos pontos de sangramento ou fragilidade nos vasos do cérebro. Eles não são a mesma coisa que placas amiloides, mas podem aparecer em condições vasculares associadas ao envelhecimento e ao Alzheimer."
       },
+      s22a: {
+        phys: "Depósitos de ferro/hemossiderina refletem resíduos de sangramento antigo ou microlesões vasculares. Em Alzheimer, isso é relevante principalmente quando há angiopatia amiloide cerebral ou fragilidade dos pequenos vasos.",
+        technique: "O padrão mais usado é ressonância magnética com SWI/T2*. A PCCT pode ser explorada como técnica complementar por alta resolução e decomposição espectral de materiais, mas ainda não substitui a ressonância para esse marcador.",
+        interpretation: "Controles tendem a ter ausência ou baixa carga de focos. Em pacientes com componente vascular ou angiopatia amiloide, pode haver aumento de focos compatíveis com sangue antigo, ferro ou hemossiderina.",
+        notes: "Explicação simples: depois de pequenos sangramentos, podem ficar resíduos de sangue degradado no cérebro. Esses resíduos podem sugerir fragilidade vascular, especialmente em casos com componente vascular associado ao Alzheimer."
+      },
+      s22b: {
+        phys: "Calcificações vasculares representam acúmulo de cálcio nas paredes dos vasos. Elas não são específicas de Alzheimer, mas indicam envelhecimento vascular, rigidez dos vasos e possível contribuição vascular para o declínio cognitivo.",
+        technique: "A tomografia computadorizada é muito sensível para cálcio. A PCCT pode melhorar a separação entre cálcio, contraste iodado e outros materiais por imagem espectral.",
+        interpretation: "Controles podem ter pouca ou nenhuma calcificação, dependendo da idade. Em pacientes com maior carga vascular, as calcificações podem estar aumentadas, sugerindo doença vascular associada.",
+        notes: "Explicação simples: calcificação vascular é como um endurecimento ou acúmulo de cálcio nos vasos. Isso não confirma Alzheimer, mas pode piorar a circulação cerebral e contribuir para sintomas cognitivos."
+      },
+      s22c: {
+        phys: "Lesões vasculares e doença de pequenos vasos refletem alterações nos vasos menores do cérebro. Elas podem causar lacunas, hipodensidades, lesões de substância branca, microangiopatia e piora da reserva cognitiva.",
+        technique: "A ressonância magnética é o método principal para substância branca e pequenos vasos. A PCCT pode ser complementar para avaliar lesões estruturais, calcificações, microvasculatura com contraste e mapas espectrais.",
+        interpretation: "Na Doença de Alzheimer com componente vascular, a carga de lesões de pequenos vasos pode estar aumentada. Isso pode piorar cognição mesmo quando amiloide e tau não explicam todo o quadro clínico.",
+        notes: "Explicação simples: pequenos vasos são como ruas estreitas que irrigam partes profundas do cérebro. Quando essas vias adoecem, podem surgir pequenas lesões que pioram memória, atenção e velocidade de pensamento."
+      },
       s23: {
         phys: "Lesões de substância branca refletem dano vascular, desmielinização, alteração microvascular ou envelhecimento patológico. Podem agravar sintomas cognitivos.",
         technique: "Ressonância magnética (RM) com sequência fluid-attenuated inversion recovery (FLAIR), usando segmentação manual, semiautomática ou automática.",
@@ -684,6 +702,9 @@
       ["Chitinase-3-like Protein 1 (YKL-40)", "Glial e inflamatório", "Não-ATN", "s20", "C_YKL40 = concentração de YKL-40", "C_YKL40 = concentração de chitinase-3-like protein 1; YKL-40 = proteína inflamatória/glial.", ""],
       ["Tomografia por Emissão de Pósitrons da Proteína Translocadora de 18 kDa (TSPO PET)", "Neuroinflamação por imagem", "Não-ATN", "s21", "Razão de Valor de Captação Padronizado para proteína translocadora de 18 kDa (SUVR_TSPO) = SUV_região_alvo / SUV_referência", "SUVR_TSPO = razão de valor de captação padronizado para proteína translocadora de 18 kDa; SUV_região_alvo = valor de captação padronizado na região avaliada; SUV_referência = valor de captação padronizado na região de referência.", ""],
       ["Micro-hemorragias e Angiopatia Amiloide Cerebral", "Vascular", "Não-ATN", "s22", "M_micro = n_micro-hemorragias", "M_micro = métrica de micro-hemorragias; n_micro-hemorragias = número de micro-hemorragias contadas por topografia.", ""],
+      ["Depósitos de Ferro/Hemossiderina", "Vascular e material", "Não-ATN | Potencialmente avaliável por PCCT", "s22a", "Carga_ferro = [n_focos, V_focos, ΔHU_espectral]", "Carga_ferro = vetor de carga de ferro/hemossiderina; n_focos = número de focos suspeitos; V_focos = volume dos focos; ΔHU_espectral = diferença de atenuação entre energias na PCCT.", ""],
+      ["Calcificações Vasculares", "Vascular e material", "Não-ATN | Compatível com PCCT", "s22b", "V_calcificação = Σ(i=1 até N) v_i; Score_calcificação = Σ área_i × fator_densidade_i", "V_calcificação = volume total de calcificações; Σ = soma; v_i = volume do foco i; Score_calcificação = escore tipo Agatston; área_i = área calcificada; fator_densidade_i = peso baseado na densidade.", ""],
+      ["Lesões Vasculares / Pequenos Vasos", "Vascular e microvascular", "Não-ATN | Parcialmente avaliável por PCCT", "s22c", "SVD_index = z(V_WMH) + z(n_lacunas) + z(n_microhemorragias) + z(V_calcificações)", "SVD_index = índice de doença de pequenos vasos; z = valor padronizado; V_WMH = volume de lesões de substância branca; n_lacunas = número de lacunas; n_microhemorragias = número de micro-hemorragias; V_calcificações = volume de calcificações.", ""],
       ["Lesões de Substância Branca", "Vascular", "Não-ATN", "s23", "V_WMH = Σ(i=1 até N) v_i", "V_WMH = volume total de lesões de substância branca; Σ = soma; N = número de lesões ou voxels segmentados; v_i = volume do elemento i.", ""],
       ["Permeabilidade da Barreira Hematoencefálica (BHE)", "Vascular e barreira", "Não-ATN", "s24", "B_vascular = [n_micro-hemorragias, V_lesões, P_BHE]", "B_vascular = vetor vascular; n_micro-hemorragias = número de micro-hemorragias; V_lesões = volume de lesões; P_BHE = estimativa de permeabilidade da barreira hematoencefálica.", ""],
       ["Neurogranin", "Sináptico", "Não-ATN", "s25", "C_Ng = concentração de neurogranin", "C_Ng = concentração de neurogranin; Ng = neurogranin, proteína pós-sináptica.", ""],
