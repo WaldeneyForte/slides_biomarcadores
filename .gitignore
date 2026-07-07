@@ -1,0 +1,13 @@
+*.pyc
+.venv/
+venv/
+.env
+.matplotlib_cache/
+.DS_Store
+.vscode/
+.agents/
+.codex_temp/
+Biomarker_alzheimer (2).pdf
+Biomarker_alzheimer_extracted_clean.md
+Biomarker_alzheimer_extracted.md
+.codex_tmp/

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biomarcadores da Doença de Alzheimer</title>
+  <style>
+    :root {
+      --bg: #111827;
+      --paper: #fbfbf8;
+      --ink: #172033;
+      --muted: #5f6b7a;
+      --line: #d7dde6;
+      --blue: #164e63;
+      --teal: #0f766e;
+      --amber: #92400e;
+      --soft-blue: #e9f4f6;
+      --soft-amber: #fff7ed;
+      --soft-gray: #f4f6f8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, system-ui, sans-serif;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .deck {
+      width: min(96vw, 1420px);
+      height: min(94vh, 860px);
+      background: var(--paper);
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      display: none;
+      height: 100%;
+      padding: 22px 34px 54px;
+    }
+
+    .slide.active {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 9px;
+    }
+
+    .slide-topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      color: var(--teal);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: .82rem;
+      letter-spacing: .08em;
+    }
+
+    .slide-title {
+      margin: 0;
+      color: var(--blue);
+      font-size: clamp(1.55rem, 2.15vw, 2.25rem);
+      line-height: 1.05;
+      border-bottom: 3px solid var(--teal);
+      padding-bottom: 6px;
+    }
+
+    .categorization {
+      background: var(--soft-blue);
+      border-left: 5px solid var(--teal);
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: clamp(.82rem, .95vw, .98rem);
+      line-height: 1.25;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 8px;
+      min-height: 0;
+    }
+
+    .field {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px 12px;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .field h3 {
+      margin: 0 0 4px;
+      color: var(--blue);
+      font-size: clamp(.92rem, 1.05vw, 1.08rem);
+    }
+
+    .field p {
+      margin: 0;
+      line-height: 1.24;
+      font-size: clamp(.8rem, .98vw, 1rem);
+    }
+
+    .intro-slide.active {
+      grid-template-rows: auto auto 1fr;
+    }
+
+    .intro-panel {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 22px;
+      align-items: stretch;
+      min-height: 0;
+    }
+
+    .intro-lead {
+      background: white;
+      border-left: 6px solid var(--teal);
+      border-radius: 6px;
+      padding: 24px 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 18px;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, .06);
+    }
+
+    .intro-lead p {
+      margin: 0;
+      font-size: clamp(1rem, 1.25vw, 1.22rem);
+      line-height: 1.38;
+    }
+
+    .intro-highlight {
+      background: var(--soft-blue);
+      border-radius: 6px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .intro-highlight h3 {
+      margin: 0;
+      color: var(--blue);
+      font-size: clamp(1.05rem, 1.35vw, 1.28rem);
+    }
+
+    .intro-highlight p {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(.95rem, 1.08vw, 1.08rem);
+      line-height: 1.34;
+    }
+
+    .intro-note {
+      background: var(--soft-amber);
+      border: 1px dashed #d97706;
+      border-radius: 6px;
+      padding: 14px 16px;
+      color: #5f370e;
+      font-size: clamp(.88rem, 1vw, 1rem);
+      line-height: 1.3;
+    }
+
+    .formula-text {
+      font-family: Consolas, "Courier New", monospace;
+      color: #991b1b;
+      font-weight: 700;
+      background: var(--soft-gray);
+      border-left: 4px solid var(--blue);
+      padding: 6px 8px;
+      border-radius: 5px;
+      display: block;
+      margin-top: 3px;
+    }
+
+    .notes {
+      background: var(--soft-amber);
+      border: 1px dashed #d97706;
+      border-radius: 6px;
+      padding: 9px 11px;
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 12px;
+      color: #5f370e;
+      min-height: 108px;
+    }
+
+    .notes h3 {
+      margin: 0 0 4px;
+      font-size: .83rem;
+      text-transform: uppercase;
+      color: var(--amber);
+      letter-spacing: .05em;
+    }
+
+    .notes p {
+      margin: 0;
+      font-size: clamp(.72rem, .86vw, .9rem);
+      line-height: 1.22;
+    }
+
+    .controls {
+      position: absolute;
+      right: 28px;
+      bottom: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: rgba(251, 251, 248, .92);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 8px;
+    }
+
+    .counter {
+      font-weight: 700;
+      color: var(--muted);
+      min-width: 74px;
+      text-align: center;
+    }
+
+    button {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 0;
+      background: var(--teal);
+      color: white;
+      font-size: 1.15rem;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .progress {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 5px;
+      background: #e5e7eb;
+    }
+
+    .progress > div {
+      height: 100%;
+      width: 0;
+      background: var(--teal);
+      transition: width .2s ease;
+    }
+
+    @media (max-width: 900px) {
+      .deck { width: 100vw; height: 100vh; border-radius: 0; }
+      .slide { padding: 18px 16px 58px; }
+      .main-grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, auto); }
+      .notes { grid-template-columns: 1fr; min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-label="Apresentação de biomarcadores da Doença de Alzheimer">
+    <section id="slides"></section>
+    <nav class="controls" aria-label="Controles da apresentação">
+      <span class="counter"><span id="current">1</span> / <span id="total">1</span></span>
+      <button id="prev" aria-label="Slide anterior">&#8592;</button>
+      <button id="next" aria-label="Próximo slide">&#8594;</button>
+    </nav>
+    <div class="progress"><div id="progress"></div></div>
+  </main>
+
+  <script>
+    const profiles = {
+      s1: {
+        phys: "A Doença de Alzheimer é uma condição neurodegenerativa progressiva marcada por alterações moleculares, sinápticas, estruturais, funcionais e cognitivas. O biomarcador é tratado como variável mensurável que conecta um fenômeno fisiopatológico a uma métrica observável.",
+        technique: "A investigação pode usar líquido cefalorraquidiano (LCR), sangue, tomografia por emissão de pósitrons (PET), ressonância magnética, teste cognitivo, áudio, transcrição e genotipagem. Cada fonte mede uma camada diferente da doença.",
+        interpretation: "O valor central do biomarcador é explicar o que ele mede, como é medido, quando tende a se alterar e quais limitações afetam sua interpretação. A razão beta-amiloide 42/beta-amiloide 40 (Aβ42/Aβ40), por exemplo, representa deposição amiloide.",
+        notes: "Explicação simples: a Doença de Alzheimer não deve ser entendida apenas pelos sintomas de memória. Os biomarcadores permitem observar sinais biológicos e funcionais mensuráveis, muitas vezes antes da fase de demência."
+      },
+      s2: {
+        phys: "Cada biomarcador deve ser apresentado por significado fisiopatológico, origem, técnica de detecção, métrica, fórmula, interpretabilidade, dinâmica temporal, classificação no framework Amiloide-Tau-Neurodegeneração (ATN) e limitações.",
+        technique: "A padronização exige informar se o dado vem de líquido cefalorraquidiano (LCR), sangue, tomografia por emissão de pósitrons (PET), ressonância magnética, teste cognitivo, áudio ou transcrição, além da plataforma ou método de análise.",
+        interpretation: "Pontos de corte dependem de fabricante, ensaio, equipamento, população, idade, protocolo de coleta e método analítico. Quando não há consenso universal, deve-se usar a direção esperada da alteração e comparação com grupo controle.",
+        notes: "Explicação simples: a mesma medida pode ter significados diferentes conforme o método. Por isso, cada biomarcador precisa ser lido com uma estrutura fixa, evitando uma lista solta de nomes."
+      },
+      s3: {
+        phys: "O framework Amiloide-Tau-Neurodegeneração (ATN) organiza biomarcadores em três eixos: A para beta-amiloide, T para tau patológica e N para neurodegeneração ou dano neuronal.",
+        technique: "Os eixos podem ser definidos por fluidos, imagem e medidas estruturais ou funcionais. Biomarcadores gliais, inflamatórios, vasculares, sinápticos, genéticos, cognitivos e de fala são classificados como não-ATN ou complementares.",
+        interpretation: "Marcadores não-ATN não substituem A, T e N. Eles ajudam a explicar heterogeneidade, risco, progressão, fenótipo clínico e manifestação funcional da Doença de Alzheimer.",
+        notes: "Explicação simples: o ATN funciona como uma organização da doença por processos. Primeiro pergunta se há amiloide, depois se há tau patológica e depois se já existe dano neuronal."
+      },
+      s4: {
+        phys: "Beta-amiloide 42 (Aβ42) é um fragmento da beta-amiloide com 42 aminoácidos, de alta tendência à agregação e deposição em placas amiloides no parênquima cerebral. Quando a deposição aumenta, a concentração livre de Aβ42 no líquido cefalorraquidiano (LCR) tende a cair.",
+        technique: "Pode ser medida no LCR obtido por punção lombar e também no plasma ou soro. As técnicas incluem imunoensaios automatizados, como Lumipulse e Elecsys, plataformas ultrassensíveis, como Simoa, e espectrometria de massas, como LC-MS/MS.",
+        interpretation: "No LCR, tende a diminuir em pacientes com patologia amiloide. No plasma, a diferença entre controle e Doença de Alzheimer é menor. Não há valor universal único; pontos de corte dependem do ensaio. Limitações incluem tubo, centrifugação, armazenamento, plataforma e contribuição periférica no sangue.",
+        notes: "Explicação simples: Aβ42 é um pequeno pedaço de proteína que pode se acumular no cérebro em forma de placas. Quando ela fica presa nessas placas, sobra menos Aβ42 livre no líquido cefalorraquidiano."
+      },
+      s5: {
+        phys: "Beta-amiloide 40 (Aβ40) é a forma mais abundante de beta-amiloide. Ela não é o principal componente das placas como Aβ42, mas representa a produção total de peptídeos amiloides do indivíduo.",
+        technique: "Pode ser medida em líquido cefalorraquidiano (LCR) e plasma por imunoensaios, Simoa ou espectrometria de massas. Sua principal utilidade é funcionar como denominador na razão Aβ42/Aβ40.",
+        interpretation: "Isoladamente, Aβ40 é pouco específica. Pode variar com produção periférica, idade, plataforma analítica, função renal e coleta. Sua utilidade temporal e clínica aumenta quando integrada à razão Aβ42/Aβ40.",
+        notes: "Explicação simples: Aβ40 é outro pedaço da família beta-amiloide. Por ser mais comum, ajuda a saber se a pessoa produz naturalmente mais ou menos beta-amiloide no geral."
+      },
+      s6: {
+        phys: "A razão beta-amiloide 42/beta-amiloide 40 (Aβ42/Aβ40) reflete a deposição de placas amiloides. Como Aβ42 tende a ficar retida nas placas e Aβ40 normaliza a produção total de amiloide, a razão captura melhor a queda relativa de Aβ42.",
+        technique: "É medida em líquido cefalorraquidiano (LCR) ou plasma por Lumipulse, Elecsys, Simoa e LC-MS/MS. No sangue, métodos de alta precisão são importantes porque a diferença entre grupos é pequena.",
+        interpretation: "Na Doença de Alzheimer, a razão tende a cair. Como exemplo dependente de ensaio, no LCR por Lumipulse, R_Aβ maior que 0,068 pode ser negativo e R_Aβ menor ou igual a 0,068 pode indicar patologia amiloide. No plasma, a queda pode ser pequena, exigindo precisão analítica.",
+        notes: "Explicação simples: a razão compara dois tipos de beta-amiloide. Ela ajuda a perceber se a Aβ42 está baixa por deposição em placas ou se a pessoa apenas produz pouca beta-amiloide no geral."
+      },
+      s7: {
+        phys: "A tomografia por emissão de pósitrons amiloide (PET Amiloide) avalia diretamente a carga de placas amiloides no tecido cerebral pela retenção de traçadores que se ligam a agregados amiloides.",
+        technique: "O exame usa traçadores como Pittsburgh Compound B, florbetapir, florbetaben ou flutemetamol. A leitura pode ser visual ou quantitativa por razão de valor de captação padronizado (SUVR), usando regiões corticais e uma região de referência.",
+        interpretation: "Controles tendem a menor retenção cortical; pacientes com deposição amiloide tendem a maior SUVR. O exame se altera precocemente, mas positividade não confirma demência, pois pode ocorrer em idosos cognitivamente normais. Limitações incluem custo, radiação, disponibilidade, traçador e região de referência.",
+        notes: "Explicação simples: o PET amiloide mostra se há sinal de placas de beta-amiloide no cérebro. Ele observa o depósito diretamente, diferente dos exames de fluido que inferem o acúmulo."
+      },
+      s8: {
+        phys: "Tau fosforilada em treonina 181 (p-tau181) reflete tau hiperfosforilada associada à patologia da Doença de Alzheimer, formação de emaranhados neurofibrilares e resposta à patologia amiloide.",
+        technique: "Pode ser medida no líquido cefalorraquidiano (LCR) e no plasma por ensaios ultrassensíveis. No plasma, a medição exige alta sensibilidade para reduzir falso negativo.",
+        interpretation: "Na Doença de Alzheimer, tende a aumentar. Pode se alterar precocemente, na fase pré-clínica, e aumentar em comprometimento cognitivo leve e demência. Limitações incluem idade, plataforma analítica, comorbidades neurológicas e presença de patologia amiloide.",
+        notes: "Explicação simples: p-tau181 é uma forma modificada da proteína tau. Quando seus níveis aumentam, isso sugere mudanças da tau relacionadas ao Alzheimer."
+      },
+      s9: {
+        phys: "Tau fosforilada em treonina 217 (p-tau217) é uma forma de tau fortemente associada à patologia de Alzheimer e descrita no material como biomarcador sanguíneo relevante para diferenciação diagnóstica.",
+        technique: "É medida em líquido cefalorraquidiano (LCR) e plasma por ensaios especializados. A interpretação depende do ensaio, da padronização laboratorial e da validação em populações diversas.",
+        interpretation: "Na Doença de Alzheimer, tende a aumentar e pode se alterar cedo, sendo útil em fases pré-clínicas e prodrômicas. O uso isolado exige cuidado porque pontos de corte e plataformas variam.",
+        notes: "Explicação simples: p-tau217 é outra forma alterada da tau. Ela costuma ajudar a diferenciar Alzheimer de outras causas de demência, mas precisa ser interpretada conforme o método usado."
+      },
+      s10: {
+        phys: "Tau fosforilada em treonina 231 (p-tau231) reflete uma forma específica de tau fosforilada associada às fases iniciais da cascata patológica, com potencial de demonstrar alterações muito precoces.",
+        technique: "Pode ser avaliada em líquido cefalorraquidiano (LCR) e plasma por métodos analíticos especializados. O material original destaca menor padronização clínica em comparação com p-tau181 e p-tau217.",
+        interpretation: "Na Doença de Alzheimer, tende a aumentar, mas o ponto de corte é menos consolidado. A dinâmica pode ser pré-clínica ou prodrômica, dependendo da coorte e do método analítico. Limitações incluem variação entre estudos e necessidade de validação longitudinal.",
+        notes: "Explicação simples: p-tau231 é mais uma forma de tau alterada que pode aparecer cedo em alguns estudos. Ela ajuda a investigar fases iniciais, mas ainda exige padronização."
+      },
+      s11: {
+        phys: "A tau total (t-tau) representa liberação de tau por dano neuronal. Não é específica da Doença de Alzheimer (DA), pois pode aumentar em lesões cerebrais, inflamações, acidente vascular cerebral (AVC) e outras doenças neurológicas.",
+        technique: "Medida principalmente no líquor, também chamado líquido cefalorraquidiano (LCR), e avaliada no plasma com métodos sensíveis. É usada como concentração absoluta e pode ser combinada com beta-amiloide 42 (Aβ42).",
+        interpretation: "Na DA, tende a subir, especialmente no LCR; controles tendem a valores menores. A razão t-tau/Aβ42 tende a aumentar na DA. Cut-offs dependem do ensaio. Pode se alterar em comprometimento cognitivo leve (CCL) e demência, acompanhando dano neuronal. Classificação Amiloide-Tau-Neurodegeneração (ATN): categoria N quando interpretada como dano neuronal; pode participar de razão que melhora a identificação de DA. Limitações: baixa especificidade, lesão cerebral aguda, outras demências e processos neurológicos não relacionados à DA.",
+        notes: "Explicação simples: É uma medida mais geral de tau liberada quando neurônios sofrem dano. Ela mostra lesão neuronal, mas não aponta sozinha que a causa é Alzheimer."
+      },
+      s12: {
+        phys: "A Tomografia por Emissão de Pósitrons tau (PET Tau) representa a distribuição espacial de agregados tau no cérebro. É relevante porque a topografia da tau se aproxima melhor do fenótipo clínico do que a carga amiloide isolada.",
+        technique: "Neuroimagem molecular por PET com traçadores de tau, como flortaucipir e outros traçadores conforme o protocolo. A métrica comum é a razão de valor de captação padronizado para tau (SUVR_tau), calculada entre região-alvo e região de referência.",
+        interpretation: "Na Doença de Alzheimer (DA), tende a subir em regiões afetadas; controles tendem a baixa retenção. Cut-offs dependem do traçador, região analisada e pipeline. Geralmente é mais informativo em fases sintomáticas e acompanha progressão clínica, embora possa detectar alterações antes da demência em alguns casos. Classificação Amiloide-Tau-Neurodegeneração (ATN): categoria T. Limitações: custo, radiação, disponibilidade, ligação inespecífica de alguns traçadores, variabilidade regional e interpretação dependente do fenótipo clínico.",
+        notes: "Explicação simples: É um exame de imagem que procura onde a tau alterada está se acumulando no cérebro. Ajuda a relacionar a área afetada com os sintomas do paciente."
+      },
+      s13: {
+        phys: "O neurofilamento de cadeia leve (NfL) é uma proteína estrutural de axônios. Quando há lesão axonal, NfL é liberado e pode aumentar no líquor, também chamado líquido cefalorraquidiano (LCR), e no sangue.",
+        technique: "Medido em plasma, soro ou LCR. As técnicas incluem Single Molecule Array (Simoa) e outros imunoensaios ultrassensíveis.",
+        interpretation: "Na neurodegeneração, tende a subir. Na Doença de Alzheimer (DA), pode aumentar, mas não é específico; controles tendem a valores menores, embora NfL aumente com idade. No estudo de Stevenson-Hoare et al., os valores brutos não foram maiores nos casos do que nos controles, provavelmente por efeito de idade e características da coorte. É mais útil para monitoramento de dano neuronal e progressão, podendo se alterar em comprometimento cognitivo leve (CCL), demência e outras doenças. Classificação Amiloide-Tau-Neurodegeneração (ATN): categoria N. Limitações: idade, doença renal, neuropatias periféricas, acidente vascular cerebral (AVC), esclerose múltipla, esclerose lateral amiotrófica (ELA), trauma e outras neurodegenerações.",
+        notes: "Explicação simples: É uma proteína dos prolongamentos dos neurônios, chamados axônios. Quando esses prolongamentos sofrem dano, o NfL pode aumentar no sangue ou líquor."
+      },
+      s14: {
+        phys: "O volume hipocampal reflete atrofia de uma estrutura essencial para memória episódica. A redução hipocampal é típica em apresentações amnésticas da Doença de Alzheimer (DA).",
+        technique: "Avaliado por ressonância magnética (RM) estrutural, com segmentação manual ou automática por softwares de volumetria cerebral.",
+        interpretation: "Na DA típica, tende a diminuir. Controles podem apresentar redução leve com envelhecimento normal, mas a taxa de atrofia tende a ser maior em DA e comprometimento cognitivo leve (CCL) amnéstico. Cut-offs dependem de idade, sexo, scanner e método de segmentação. Geralmente é mais evidente em CCL amnéstico e demência, com alterações sutis possíveis antes. Classificação Amiloide-Tau-Neurodegeneração (ATN): categoria N. Limitações: idade, escolaridade, reserva cognitiva, epilepsia, depressão, doenças vasculares, diferenças de scanner, método de segmentação e menor sensibilidade para variantes não amnésticas.",
+        notes: "Explicação simples: Mede o tamanho do hipocampo, uma região muito importante para formar novas memórias. No Alzheimer típico, essa região costuma encolher."
+      },
+      s15: {
+        phys: "A espessura cortical reflete perda de substância cinzenta e atrofia cortical regional. Ajuda a mapear regiões afetadas conforme o fenótipo clínico.",
+        technique: "Medida por ressonância magnética (RM) estrutural com processamento morfométrico.",
+        interpretation: "Na Doença de Alzheimer (DA), tende a diminuir em regiões temporais, parietais e associativas. Controles apresentam padrão compatível com envelhecimento normal. Cut-offs dependem de atlas, scanner, idade e pipeline. Geralmente é evidente em comprometimento cognitivo leve (CCL) e demência, podendo acompanhar progressão. Classificação Amiloide-Tau-Neurodegeneração (ATN): categoria N. Limitações: idade, sexo, scanner, qualidade da segmentação, lesões vasculares e variantes clínicas.",
+        notes: "Explicação simples: Mede a espessura da camada externa do cérebro. Quando há perda de tecido cerebral, essa espessura pode diminuir em regiões específicas."
+      },
+      s16: {
+        phys: "A Tomografia por Emissão de Pósitrons com fluorodesoxiglicose marcada com flúor-18 (FDG-PET) reflete metabolismo cerebral da glicose. Hipometabolismo indica disfunção neuronal e sináptica.",
+        technique: "PET com fluorodesoxiglicose marcada com 18F. A métrica comum é a razão de valor de captação padronizado para FDG (SUVR_FDG), calculada entre região-alvo e região de referência.",
+        interpretation: "Na Doença de Alzheimer (DA) típica, tende a diminuir em regiões temporoparietais e posteriores. Controles apresentam metabolismo preservado. Cut-offs dependem do protocolo e da região de referência. Frequentemente se altera em comprometimento cognitivo leve (CCL) e demência, podendo refletir disfunção antes de atrofia estrutural clara. Classificação Amiloide-Tau-Neurodegeneração (ATN): categoria N. Limitações: diabetes, glicemia, medicações, estado metabólico, protocolos de aquisição e outras doenças neurodegenerativas.",
+        notes: "Explicação simples: É um exame que mostra o consumo de energia pelo cérebro. Regiões que estão funcionando pior costumam consumir menos glicose."
+      },
+      s17: {
+        phys: "A imagem por tensor de difusão em ressonância magnética (DTI-MRI) reflete integridade microestrutural da substância branca. Alterações podem indicar desconexão entre redes cerebrais.",
+        technique: "Ressonância magnética por tensor de difusão. A métrica comum é a anisotropia fracionada (FA), com avaliação complementar por difusividade média (MD).",
+        interpretation: "Na Doença de Alzheimer (DA), FA tende a diminuir em tratos afetados e MD pode aumentar. Controles tendem a maior integridade de substância branca. Cut-offs dependem de scanner, protocolo e atlas. Pode se alterar em fases prodrômicas e acompanhar progressão de redes afetadas. Classificação Amiloide-Tau-Neurodegeneração (ATN): categoria N ou biomarcador complementar de conectividade estrutural. Limitações: movimento, scanner, parâmetros de aquisição, lesões vasculares e envelhecimento normal.",
+        notes: "Explicação simples: É uma ressonância que observa a integridade das fibras de conexão do cérebro, como se avaliasse a qualidade dos cabos que ligam uma região à outra."
+      },
+      s18: {
+        phys: "A conectividade funcional em repouso reflete comunicação funcional entre regiões cerebrais. Na Doença de Alzheimer (DA), redes como a default mode network podem apresentar alterações.",
+        technique: "Ressonância magnética funcional em repouso (rs-fMRI). A análise usa correlação entre séries temporais de regiões cerebrais.",
+        interpretation: "Na DA, pode haver redução ou reorganização de conectividade em redes de memória e associação. Controles tendem a padrões mais preservados. Não há cut-off universal. Pode se alterar em fases pré-clínicas ou em comprometimento cognitivo leve (CCL), mas a aplicação clínica ainda é limitada. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; biomarcador funcional complementar. Limitações: movimento, ruído fisiológico, sono, medicações, ansiedade, scanner e pipeline de pré-processamento.",
+        notes: "Explicação simples: Mede se diferentes regiões do cérebro estão trabalhando de forma coordenada mesmo quando a pessoa está em repouso."
+      },
+      s19: {
+        phys: "A proteína ácida fibrilar glial (GFAP) é uma proteína de astrócitos. O aumento de GFAP sugere ativação astrocitária e resposta glial, frequentemente associada à patologia amiloide e à progressão.",
+        technique: "Medida em plasma, soro ou líquor, também chamado líquido cefalorraquidiano (LCR), por Single Molecule Array (Simoa), imunoensaios ultrassensíveis ou plataformas automatizadas.",
+        interpretation: "Na Doença de Alzheimer (DA), tende a subir; controles tendem a valores menores. No estudo de Stevenson-Hoare et al., GFAP plasmática média foi maior em casos de DA do que em controles, mas o valor é específico da coorte. Pode se alterar cedo, inclusive em associação com patologia amiloide, e ter valor prognóstico. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; marcador glial/inflamatório complementar. Limitações: lesões cerebrais, doença vascular, trauma, inflamação, idade e outras doenças neurológicas.",
+        notes: "Explicação simples: É uma proteína relacionada aos astrócitos, células de apoio do cérebro. Quando o cérebro está sob estresse, essas células podem reagir e liberar mais GFAP."
+      },
+      s20: {
+        phys: "YKL-40, ou chitinase 3-like 1, reflete processos inflamatórios e ativação glial.",
+        technique: "Medido principalmente no líquor, também chamado líquido cefalorraquidiano (LCR), por imunoensaios.",
+        interpretation: "Na Doença de Alzheimer (DA), pode subir, mas não é específico. Controles tendem a menores níveis, conforme faixa etária e método. Pode acompanhar inflamação e progressão, mas sua dinâmica é menos consolidada do que beta-amiloide e tau. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; marcador inflamatório/glial. Limitações: aumenta em múltiplas condições inflamatórias, neurodegenerativas e relacionadas ao envelhecimento.",
+        notes: "Explicação simples: É uma molécula ligada a processos de defesa e inflamação no cérebro. Ela pode indicar que células de apoio estão reagindo a algum tipo de dano."
+      },
+      s21: {
+        phys: "A Tomografia por Emissão de Pósitrons da Proteína Translocadora de 18 kDa (TSPO PET) reflete neuroinflamação, especialmente associada à ativação microglial.",
+        technique: "Tomografia por Emissão de Pósitrons (PET) com traçadores ligantes de proteína translocadora de 18 kDa (TSPO). A métrica é a razão de valor de captação padronizado para TSPO (SUVR_TSPO).",
+        interpretation: "Na presença de neuroinflamação, tende a subir; controles tendem a menor sinal. Cut-offs dependem de traçador e protocolo. Pode se alterar em fases variáveis e é mais usado para pesquisa de mecanismos inflamatórios do que para diagnóstico clínico rotineiro. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; inflamatório. Limitações: polimorfismos que afetam ligação ao TSPO, variação por traçador, inflamação não relacionada à Doença de Alzheimer (DA), custo e radiação.",
+        notes: "Explicação simples: É um exame de imagem usado para observar sinais de inflamação no cérebro, principalmente ligados à ativação de células de defesa chamadas micróglia."
+      },
+      s22: {
+        phys: "Micro-hemorragias podem refletir fragilidade vascular, angiopatia amiloide cerebral ou comorbidade vascular.",
+        technique: "Ressonância magnética (RM) com sequências sensíveis a susceptibilidade, como susceptibility weighted imaging (SWI) ou T2*.",
+        interpretation: "Controles podem ter nenhuma ou poucas micro-hemorragias, especialmente dependendo da idade. Na Doença de Alzheimer (DA) com componente vascular ou angiopatia amiloide, a contagem pode subir. Pode aparecer ao longo do envelhecimento e em fases sintomáticas; também é importante para segurança em terapias anti-amiloide. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; vascular. Limitações: hipertensão, anticoagulação, doença vascular, trauma, idade, qualidade da sequência e critérios de leitura.",
+        notes: "Explicação simples: São pequenos pontos de sangramento ou fragilidade nos vasos do cérebro. Eles não são a mesma coisa que placas amiloides, mas podem aparecer em condições vasculares associadas ao envelhecimento e ao Alzheimer."
+      },
+      s23: {
+        phys: "Lesões de substância branca refletem dano vascular, desmielinização, alteração microvascular ou envelhecimento patológico. Podem agravar sintomas cognitivos.",
+        technique: "Ressonância magnética (RM) com sequência fluid-attenuated inversion recovery (FLAIR), usando segmentação manual, semiautomática ou automática.",
+        interpretation: "Na Doença de Alzheimer (DA) com componente vascular, tende a subir. Controles idosos podem apresentar alguma carga de lesões. Aumenta com idade e fatores vasculares; pode preceder ou acompanhar sintomas cognitivos. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; vascular/complementar. Limitações: hipertensão, diabetes, acidente vascular cerebral (AVC), enxaqueca, envelhecimento e diferenças de segmentação.",
+        notes: "Explicação simples: São marcas vistas na ressonância que indicam alterações nas conexões profundas do cérebro, muitas vezes ligadas a vasos sanguíneos pequenos."
+      },
+      s24: {
+        phys: "A permeabilidade da barreira hematoencefálica (BHE) reflete disfunção da barreira, permitindo maior troca anormal entre sangue e tecido cerebral.",
+        technique: "Imagem com contraste dinâmico, principalmente dynamic contrast-enhanced magnetic resonance imaging (DCE-MRI); também pode ser estimada por marcadores de líquor, ou líquido cefalorraquidiano (LCR), em alguns protocolos.",
+        interpretation: "Na disfunção vascular e inflamatória, a permeabilidade da barreira hematoencefálica (P_BHE) tende a subir. Em controles, espera-se menor extravasamento. Pode ocorrer em fases precoces ou acompanhar envelhecimento vascular e progressão. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; vascular/barreira. Limitações: protocolo de contraste, função renal, idade, vascularização, inflamação sistêmica e qualidade do modelo farmacocinético.",
+        notes: "Explicação simples: A barreira hematoencefálica funciona como um filtro de proteção entre o sangue e o cérebro. Esse biomarcador mede se essa barreira está ficando mais 'vazada' do que deveria."
+      },
+      s25: {
+        phys: "Neurogranin é uma proteína pós-sináptica ligada à plasticidade sináptica. Seu aumento em fluidos pode indicar dano ou perda sináptica, dimensão fortemente relacionada ao declínio cognitivo.",
+        technique: "Medida principalmente no líquor, também chamado líquido cefalorraquidiano (LCR); também investigada em exossomos neuronais.",
+        interpretation: "Na Doença de Alzheimer (DA), tende a subir no LCR; controles tendem a valores menores. Cut-offs dependem do ensaio e ainda não são universalizados. Pode se alterar em fases prodrômicas e se relacionar com progressão cognitiva. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; sináptico. Limitações: não é exclusivo de DA, depende do ensaio e ainda é mais usado em pesquisa.",
+        notes: "Explicação simples: É uma proteína ligada às sinapses, os pontos de comunicação entre neurônios. Quando aumenta no líquor, pode indicar perda ou dano nessas conexões."
+      },
+      s26: {
+        phys: "Beta-synuclein é investigada como marcador de degeneração ou disfunção sináptica.",
+        technique: "Pode ser medida em fluidos biológicos por ensaios especializados; ainda é biomarcador emergente.",
+        interpretation: "Pode subir em degeneração sináptica, mas a interpretação ainda é exploratória. A dinâmica temporal ainda está em estudo. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; sináptico. Limitações: baixa padronização, disponibilidade limitada e necessidade de validação em grandes coortes.",
+        notes: "Explicação simples: É uma proteína associada às sinapses. Pode ajudar a indicar se há degeneração nas conexões entre neurônios."
+      },
+      s27: {
+        phys: "A Tomografia por Emissão de Pósitrons da Proteína 2A de Vesícula Sináptica (SV2A PET) reflete densidade sináptica por meio de traçadores ligados à proteína SV2A em vesículas sinápticas.",
+        technique: "Tomografia por Emissão de Pósitrons (PET) molecular com traçadores de proteína 2A de vesícula sináptica (SV2A). A métrica é a razão de valor de captação padronizado para SV2A (SUVR_SV2A).",
+        interpretation: "Na perda sináptica, tende a diminuir. Controles tendem a maior sinal de densidade sináptica. Pode ser relevante em fases em que perda sináptica acompanha declínio cognitivo. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; sináptico. Limitações: uso predominantemente em pesquisa, custo alto, radiação, escolha de traçador e região de referência.",
+        notes: "Explicação simples: É um exame de imagem que estima a quantidade de sinapses no cérebro. Menor sinal pode indicar perda de conexões neuronais."
+      },
+      s28: {
+        phys: "A apolipoproteína E épsilon 4 (APOE-ε4) é o principal fator genético de risco para Doença de Alzheimer (DA) de início tardio. Influencia metabolismo lipídico, depuração de amiloide e vulnerabilidade cerebral.",
+        technique: "Teste genético por genotipagem.",
+        interpretation: "Maior dose de ε4 aumenta risco relativo, mas não confirma DA. Controles podem ter ε4, e pacientes com DA podem não ter. É estável desde o nascimento e funciona como marcador de risco, não de estágio. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; genético/riscos. Limitações: interpretação probabilística, ancestralidade, interação com idade, sexo, ambiente e outros genes, além de questões éticas de aconselhamento genético.",
+        notes: "Explicação simples: É uma variante genética que aumenta o risco de Alzheimer tardio. Ela não significa que a pessoa terá a doença, apenas que nasceu com maior predisposição."
+      },
+      s29: {
+        phys: "A apolipoproteína E épsilon 2 (APOE-ε2) pode atuar como fator protetor relativo contra Doença de Alzheimer (DA) em algumas populações.",
+        technique: "Genotipagem.",
+        interpretation: "A presença de ε2 pode reduzir risco relativo, mas não impede a doença. É estável desde o nascimento e atua como marcador de risco/modulação. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; genético. Limitações: efeito depende de ancestralidade, idade, interação com outros alelos e desenho do estudo.",
+        notes: "Explicação simples: É uma variante genética que pode estar associada a menor risco de Alzheimer em algumas populações."
+      },
+      s30: {
+        phys: "O escore poligênico de risco (PRS) agrega múltiplas variantes genéticas de pequeno efeito. O PRS sem apolipoproteína E (PRS_noAPOE) remove a região APOE para estimar risco residual.",
+        technique: "Genotipagem ampla ou genome-wide association study array (GWAS-array).",
+        interpretation: "Maior PRS indica maior risco genético agregado, mas não confirma patologia atual. É estável desde o nascimento e útil para estratificação de risco, não para monitorar progressão. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; genético. Limitações: depende da população usada para construir o escore, pode ter desempenho pior em ancestralidades sub-representadas e não substitui biomarcadores biológicos.",
+        notes: "Explicação simples: É uma soma de vários pequenos fatores genéticos. Em vez de olhar apenas um gene, tenta estimar o risco combinado de muitas variantes."
+      },
+      s31: {
+        phys: "Mutações patogênicas na Proteína Precursora Amiloide (APP), Presenilina 1 (PSEN1) e Presenilina 2 (PSEN2) estão associadas a formas familiares raras de Doença de Alzheimer (DA) de início precoce.",
+        technique: "Sequenciamento genético.",
+        interpretation: "Em controles e na maioria dos casos esporádicos, essas mutações estão ausentes. Quando presentes em contexto familiar compatível, têm forte relevância etiológica. São estáveis desde o nascimento e associadas a risco de desenvolvimento precoce. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; genético/etiológico. Limitações: raridade, necessidade de aconselhamento genético, variantes de significado incerto e implicações familiares.",
+        notes: "Explicação simples: São genes nos quais mutações raras podem causar formas familiares e precoces de Alzheimer."
+      },
+      s32: {
+        phys: "O Mini-Exame do Estado Mental (MMSE) reflete desempenho cognitivo global, avaliando orientação, memória, atenção, cálculo, linguagem e construção visuoespacial.",
+        technique: "Teste cognitivo breve aplicado clinicamente.",
+        interpretation: "Controles geralmente apresentam pontuações mais altas. Valores abaixo de 24 são frequentemente usados como suspeita de comprometimento, mas o ponto de corte depende de idade, escolaridade e população. Na Doença de Alzheimer (DA), tende a diminuir. Torna-se mais alterado em comprometimento cognitivo leve (CCL) avançado e demência, podendo ser pouco sensível em fases iniciais. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; cognitivo/funcional. Limitações: escolaridade, idioma, cultura, déficits sensoriais, depressão e baixa sensibilidade para alterações sutis.",
+        notes: "Explicação simples: É um teste breve que dá uma pontuação geral do funcionamento cognitivo, como orientação, memória, atenção e linguagem."
+      },
+      s33: {
+        phys: "A Avaliação Cognitiva de Montreal (MoCA) avalia cognição global com maior sensibilidade para comprometimento cognitivo leve, incluindo atenção, função executiva, memória, linguagem e visuoespacial.",
+        technique: "Teste cognitivo breve.",
+        interpretation: "Pontuação maior ou igual a 26 é frequentemente usada como referência de normalidade em muitos contextos, mas não é universal. Na Doença de Alzheimer (DA) e no comprometimento cognitivo leve (CCL), tende a diminuir. Pode detectar CCL antes do MMSE em alguns pacientes. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; cognitivo. Limitações: escolaridade, cultura, idioma, visão, audição, ansiedade e treinamento do aplicador.",
+        notes: "Explicação simples: É um teste cognitivo breve parecido com o MMSE, mas geralmente mais sensível para alterações leves."
+      },
+      s34: {
+        phys: "O Clinical Dementia Rating (CDR) reflete gravidade clínica da demência, integrando cognição e funcionalidade.",
+        technique: "Escala clínica baseada em entrevista e avaliação funcional.",
+        interpretation: "CDR = 0 sugere controle; CDR = 0,5 indica comprometimento questionável ou muito leve; CDR maior ou igual a 1 sugere demência em diferentes graus. É mais útil quando já há impacto funcional e acompanha progressão clínica. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; clínico-funcional. Limitações: depende de informante, julgamento clínico, contexto cultural e funcionalidade basal.",
+        notes: "Explicação simples: É uma escala clínica que tenta medir a gravidade do comprometimento cognitivo e funcional no dia a dia."
+      },
+      s35: {
+        phys: "A memória episódica reflete capacidade de aprender, armazenar e recordar novas informações. A forma típica da Doença de Alzheimer (DA) afeta fortemente essa função.",
+        technique: "Testes de aprendizagem verbal, recordação livre, recordação com pistas e reconhecimento.",
+        interpretation: "Controles tendem a maior recordação. Na DA típica, recordação livre e total tendem a cair; intrusões podem aumentar. Pode se alterar em fase prodrômica ou comprometimento cognitivo leve (CCL) amnéstico. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; cognitivo. Limitações: escolaridade, atenção, depressão, ansiedade, sono, medicações e linguagem.",
+        notes: "Explicação simples: É a capacidade de lembrar eventos e informações recentes, como uma conversa, uma lista de palavras ou algo que aconteceu há pouco tempo."
+      },
+      s36: {
+        phys: "A fluência verbal reflete busca lexical, memória semântica e função executiva.",
+        technique: "Teste cognitivo em que a pessoa produz palavras de uma categoria ou letra em tempo limitado.",
+        interpretation: "Controles tendem a produzir mais palavras e menos repetições. Na Doença de Alzheimer (DA), especialmente em comprometimento semântico, a fluência semântica tende a diminuir. Pode se alterar em comprometimento cognitivo leve (CCL) e demência inicial. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; cognitivo-linguístico. Limitações: escolaridade, cultura, idioma, depressão, velocidade psicomotora e estratégia de busca.",
+        notes: "Explicação simples: É a capacidade de produzir palavras rapidamente dentro de uma regra, como falar nomes de animais em um minuto."
+      },
+      s37: {
+        phys: "A Frequência Fundamental (F0) reflete a frequência de vibração das pregas vocais e está associada ao tom da voz.",
+        technique: "Áudio gravado; extração automática de pitch por algoritmos como autocorrelação, Praat ou métodos modernos de processamento de fala.",
+        interpretation: "Não há cut-off de Doença de Alzheimer (DA). Controles apresentam valores compatíveis com sexo, idade e tarefa. Na DA, alterações podem aparecer como redução de expressividade ou alteração prosódica, mas não são específicas. Pode aparecer junto a alterações de prosódia em fases sintomáticas. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; biomarcador vocal/comportamental. Limitações: sexo, idade, emoção, tarefa, microfone, ruído, estado vocal e doenças laríngeas.",
+        notes: "Explicação simples: É o tom básico da voz, relacionado à velocidade de vibração das pregas vocais. Vozes mais agudas têm F0 maior; vozes mais graves têm F0 menor."
+      },
+      s38: {
+        phys: "Jitter é uma medida da irregularidade do tempo de vibração das pregas vocais. Em uma voz idealmente estável, cada ciclo glotal teria duração muito parecida com o ciclo seguinte; quando essa duração oscila muito, o jitter aumenta.",
+        technique: "Áudio com trechos vozeados; extração por algoritmos que identificam períodos glotais.",
+        interpretation: "Controles tendem a menor jitter. Na Doença de Alzheimer (DA), jitter não confirma patologia, mas pode compor perfil de instabilidade vocal. Não há cut-off específico para DA. É mais útil em fases sintomáticas e como marcador complementar. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; acústico-fonatório. Limitações: qualidade de áudio, detecção correta de ciclos glotais, ruído, intensidade vocal, doença vocal e microfone.",
+        notes: "Explicação simples: Mede se a vibração da voz está estável no tempo. Se cada vibração das pregas vocais dura tempos muito diferentes, o jitter aumenta."
+      },
+      s39: {
+        phys: "Shimmer é uma medida da irregularidade da amplitude da voz. Enquanto o jitter observa se os ciclos vocais variam no tempo, o shimmer observa se eles variam em intensidade; aumento sugere instabilidade de amplitude da fonte vocal.",
+        technique: "Áudio com trechos vozeados; extração por análise de ciclos glotais.",
+        interpretation: "Controles tendem a menor shimmer. Na Doença de Alzheimer (DA), pode indicar alteração de qualidade vocal, mas não é específico. Não há cut-off de DA. Tem valor complementar em fase sintomática. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; acústico-fonatório. Limitações: ruído, distância do microfone, intensidade vocal, segmentação glotal, rouquidão e doenças laríngeas.",
+        notes: "Explicação simples: Mede se a intensidade da voz está estável. Se a voz sai com amplitudes muito irregulares de um ciclo para outro, o shimmer aumenta."
+      },
+      s40: {
+        phys: "Coeficientes Cepstrais em Frequência Mel (MFCCs) resumem o formato espectral da fala em uma escala inspirada na percepção auditiva humana. Transformam cada pequeno trecho de fala em um vetor compacto com informações sobre timbre, articulação e ressonância do trato vocal.",
+        technique: "Áudio; extração computacional em janelas curtas após espectro, banco de filtros Mel, log-energia e transformada discreta do cosseno.",
+        interpretation: "Não há valor normal universal. Em Doença de Alzheimer (DA), padrões de MFCC podem diferir estatisticamente em modelos, mas cada coeficiente isolado é menos interpretável clinicamente. Pode capturar alterações acústicas em fases sintomáticas e depende da tarefa. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; acústico-espectral. Limitações: menor interpretabilidade direta, microfone, ruído, idioma, sexo, idade e pré-processamento.",
+        notes: "Explicação simples: É um conjunto de números que resume o formato do som da fala. Ele transforma o áudio em uma representação compacta usada por modelos computacionais."
+      },
+      s41: {
+        phys: "Taxa de fala e taxa de articulação refletem velocidade de produção verbal. A taxa de fala inclui pausas; a taxa de articulação considera apenas trechos falados.",
+        technique: "Áudio e/ou transcrição temporal alinhada.",
+        interpretation: "Controles tendem a maior taxa de fala. Na Doença de Alzheimer (DA), a taxa de fala pode diminuir, especialmente por aumento de pausas e dificuldade lexical. Pode se alterar em comprometimento cognitivo leve (CCL) e fases sintomáticas iniciais. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; temporal-comportamental. Limitações: escolaridade, idioma, tarefa, personalidade, depressão, ansiedade e velocidade motora.",
+        notes: "Explicação simples: Medem a velocidade da fala. A taxa de fala conta o tempo total, incluindo pausas; a taxa de articulação olha mais diretamente para a velocidade dos trechos falados."
+      },
+      s42: {
+        phys: "Pausas e disfluências refletem planejamento linguístico, busca lexical e continuidade discursiva. Pausas longas podem indicar dificuldade de recuperação de palavras.",
+        technique: "Áudio segmentado e transcrição. Pausas silenciosas são intervalos sem fala; pausas preenchidas incluem 'é', 'hã' e 'hum'.",
+        interpretation: "Controles tendem a menor proporção de pausas longas e disfluências. Na Doença de Alzheimer (DA), pausas, hesitações e reformulações tendem a subir. Pode se alterar em comprometimento cognitivo leve (CCL) e demência inicial, especialmente em tarefas narrativas ou descrição de imagem. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; temporal-linguístico. Limitações: tarefa, ansiedade, educação, personalidade, idioma, qualidade do áudio e regras de segmentação.",
+        notes: "Explicação simples: Medem interrupções, hesitações e quebras no fluxo da fala, como pausas longas, 'é...', 'hã...' e reformulações."
+      },
+      s43: {
+        phys: "Diversidade lexical reflete riqueza vocabular e acesso ao léxico. Redução pode indicar empobrecimento lexical e dificuldade de nomeação.",
+        technique: "Transcrição de fala; análise por processamento de linguagem natural (NLP) ou contagem lexical.",
+        interpretation: "Controles tendem a maior diversidade lexical. Na Doença de Alzheimer (DA), a diversidade tende a diminuir; uso de termos genéricos e repetições pode aumentar. Pode se alterar em comprometimento cognitivo leve (CCL) e fases iniciais, especialmente em fala conectada. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; linguístico-semântico. Limitações: Type-Token Ratio (TTR) depende do tamanho do texto; idioma, escolaridade e tarefa influenciam; Moving-Average Type-Token Ratio (MATTR) ou Measure of Textual Lexical Diversity (MTLD) são preferíveis para textos de tamanhos diferentes.",
+        notes: "Explicação simples: Mede quão variado é o vocabulário usado por uma pessoa. Quanto mais palavras diferentes, maior tende a ser a diversidade lexical."
+      },
+      s44: {
+        phys: "Conteúdo informacional reflete quantidade de unidades relevantes de informação na fala. Uma narrativa pode ter muitas palavras, mas pouco conteúdo útil.",
+        technique: "Transcrição de fala, especialmente descrição de imagem ou narrativa. Unidades informacionais podem ser anotadas manualmente ou por processamento de linguagem natural (NLP).",
+        interpretation: "Controles tendem a maior densidade informacional. Na Doença de Alzheimer (DA), o conteúdo informacional tende a diminuir, com mais circunlóquios e menor especificidade. Pode se alterar em comprometimento cognitivo leve (CCL) e progressão para demência. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; discursivo-cognitivo. Limitações: tarefa, sistema de anotação, escolaridade, cultura e qualidade da transcrição.",
+        notes: "Explicação simples: Mede quanta informação útil aparece na fala. Uma pessoa pode falar muito, mas transmitir poucas ideias relevantes."
+      },
+      s45: {
+        phys: "Coerência semântica reflete manutenção de tópico e continuidade de sentido entre frases.",
+        technique: "Transcrição; embeddings semânticos ou análise discursiva.",
+        interpretation: "Controles tendem a maior coerência. Na Doença de Alzheimer (DA), a coerência pode diminuir, com perda de tópico e narrativa fragmentada. É útil em fases sintomáticas iniciais e progressivas, especialmente em fala espontânea. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; semântico-discursivo. Limitações: depende do modelo de linguagem, idioma, qualidade de transcrição e tarefa; embeddings podem capturar vieses semânticos.",
+        notes: "Explicação simples: Mede se as ideias de uma fala continuam fazendo sentido uma após a outra, sem perder o assunto ou ficar desconectadas."
+      },
+      s46: {
+        phys: "Entropia lexical mede quão variado e imprevisível é o vocabulário. Em Alzheimer, pode quantificar empobrecimento vocabular, repetição e perda de flexibilidade lexical.",
+        technique: "Transcrições de fala espontânea, fala conectada, descrição de imagem, entrevistas clínicas ou testes de fluência verbal. A detecção usa processamento de linguagem natural (NLP), tokenização, normalização textual, controle de pontuação e, conforme o protocolo, lematização.",
+        interpretation: "Em controles, espera-se maior entropia lexical. No espectro da Doença de Alzheimer (DA), a tendência é redução da entropia lexical, especialmente com repetição, empobrecimento vocabular e termos vagos. Não há cut-off universal; recomenda-se comparação com controles pareados por idade, escolaridade, idioma e tarefa, usando z-score. Pode se alterar em fases iniciais e em comprometimento cognitivo leve (CCL). Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; linguístico-semântico e discursivo. Limitações: tamanho da amostra, tarefa, idioma, escolaridade, lematização, transcrição automática, stopwords e segmentação; maior entropia nem sempre significa melhor cognição.",
+        notes: "Explicação simples: Mede se o vocabulário é variado ou repetitivo. Se a pessoa usa sempre as mesmas palavras, a entropia tende a cair."
+      },
+      s47: {
+        phys: "Measure of Textual Lexical Diversity (MTLD), Hypergeometric Distribution D (HD-D) e vocd-D são métricas de diversidade lexical mais robustas que o Type-Token Ratio (TTR) simples, pois tentam controlar melhor o efeito do tamanho da amostra.",
+        technique: "Calculadas a partir de transcrições de fala por processamento de linguagem natural (NLP), tokenização, limpeza textual, contagem de palavras e análise da distribuição lexical. Podem ser aplicadas a fala espontânea, narrativas, descrição de figuras e testes de fluência.",
+        interpretation: "Em controles, espera-se maior MTLD, HD-D e vocd-D. No espectro da Doença de Alzheimer (DA), a tendência é redução dessas métricas, indicando menor riqueza lexical. Não existem cut-offs universais; valores dependem de idioma, tarefa, tamanho da amostra e pré-processamento. Podem se alterar em comprometimento cognitivo leve (CCL) e fases iniciais, especialmente em fala conectada. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; linguístico-lexicais. Limitações: tamanho e qualidade da transcrição; HD-D depende do tamanho da amostra, MTLD do limiar, vocd-D do ajuste do modelo; escolaridade, vocabulário prévio, bilinguismo e tema da tarefa influenciam.",
+        notes: "Explicação simples: São formas mais robustas de medir diversidade de vocabulário, tentando corrigir o problema de textos maiores ou menores."
+      },
+      s48: {
+        phys: "Densidade de ideias mede quanta informação real existe dentro da fala. Em Alzheimer, captura a diferença entre falar muito e comunicar bem: o discurso pode se tornar mais vago, repetitivo e menos informativo.",
+        technique: "Transcrições de fala conectada, descrição de imagem, narrativa autobiográfica ou entrevistas clínicas. A detecção pode ser manual, por unidades proposicionais, ou computacional, por modelos de processamento de linguagem natural (NLP).",
+        interpretation: "Em controles, espera-se maior densidade de ideias e maior proporção de unidades relevantes. No espectro da Doença de Alzheimer (DA), a tendência é redução da densidade de ideias, com mais circunlóquios, repetições, comentários vagos e menor conteúdo específico. Não há cut-off universal; depende da tarefa e do esquema de anotação. Pode se alterar em fases iniciais e fica mais evidente em estágios avançados. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; discursivo-cognitivo. Limitações: tarefa, protocolo de anotação, variação entre avaliadores e erros de modelos automáticos em fala espontânea ou transcrição ruidosa.",
+        notes: "Explicação simples: Mede a quantidade de ideias relevantes em relação ao tamanho da fala. Ajuda a perceber se o discurso tem conteúdo ou apenas muitas palavras."
+      },
+      s49: {
+        phys: "A razão pronome/substantivo mede quanto a fala depende de pronomes e termos genéricos em vez de substantivos específicos. Pode indicar dificuldade de recuperar nomes específicos.",
+        technique: "Transcrição de fala e análise morfossintática por processamento de linguagem natural (NLP), com etiquetagem de pronomes, substantivos comuns, substantivos próprios e termos vagos como 'coisa', 'negócio', 'isso' e 'aquilo'.",
+        interpretation: "Em controles, espera-se maior uso de substantivos específicos e menor dependência de pronomes vagos. No espectro da Doença de Alzheimer (DA), a razão pronome/substantivo e a taxa de termos vagos podem subir, enquanto substantivos específicos podem cair. Não há cut-off universal; comparar por tarefa, idade, escolaridade e tamanho da fala. Pode se alterar em comprometimento cognitivo leve (CCL) e DA inicial; em variantes linguísticas como afasia progressiva primária logopênica (lvPPA) associada à patologia AD, pode ser informativa. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; lexical-discursivo. Limitações: transcrição, etiquetador, idioma, estilo pessoal, tarefa, gênero discursivo e comprimento da fala; pronomes podem ser adequados quando o referente está claro.",
+        notes: "Explicação simples: Mede se a pessoa usa muitos pronomes e termos vagos em vez de nomes específicos. Isso pode indicar dificuldade de nomeação."
+      },
+      s50: {
+        phys: "Anomia é a dificuldade de encontrar a palavra ou nome correto. Circunlóquio é uma estratégia de compensação em que a pessoa contorna a palavra esquecida com descrição indireta. Em Alzheimer, reflete falhas de acesso lexical, memória semântica e seleção de palavras.",
+        technique: "Tarefas de nomeação, fluência verbal, descrição de imagem, fala espontânea ou entrevista clínica. A detecção pode ser manual ou computacional por processamento de linguagem natural (NLP), identificação de pausas antes de nomes, termos vagos, reformulações e descrições substitutivas.",
+        interpretation: "Em controles, espera-se baixa taxa de anomia e poucos circunlóquios, considerando idade e escolaridade. No espectro da Doença de Alzheimer (DA), a tendência é aumento de falhas de nomeação, circunlóquios, substituições semânticas e termos vagos. Não há cut-off universal; em tarefas de nomeação, acertos e erros podem ser comparados a normas do teste. Pode aparecer em comprometimento cognitivo leve (CCL) e DA inicial, sobretudo com comprometimento de memória semântica; em afasia progressiva primária logopênica (lvPPA) associada à patologia AD, pode ser sinal central. Classificação Amiloide-Tau-Neurodegeneração (ATN): não-ATN; linguístico-cognitivo. Limitações: escolaridade, vocabulário prévio, bilinguismo, familiaridade com objetos, cultura, visão, ansiedade e tarefa; detecção automática de circunlóquios ainda é difícil.",
+        notes: "Explicação simples: Mede falhas para encontrar palavras e tentativas de contornar o esquecimento com descrições indiretas."
+      },
+      intro: {
+        phys: "A Doença de Alzheimer é descrita como um continuum biológico e clínico. O objetivo do slide é organizar moléculas, imagem, genética, cognição e fala como medidas de processos fisiopatológicos, não como nomes isolados.",
+        technique: "A leitura integra líquido cefalorraquidiano (LCR), sangue, tomografia por emissão de pósitrons (PET), ressonância magnética, testes cognitivos, áudio, transcrição linguística e genotipagem.",
+        interpretation: "A interpretação deve sempre ligar o valor medido ao processo que ele representa, à fase temporal da doença, aos confundidores e à validade do ponto de corte usado.",
+        notes: "Explique que um biomarcador é uma janela para um processo. Alguns marcadores mostram acúmulo de proteína, outros mostram dano neuronal, inflamação, risco genético ou manifestação funcional."
+      },
+      method: {
+        phys: "A padronização evita que um número seja interpretado fora de contexto. O mesmo biomarcador pode mudar conforme técnica, idade, comorbidade, população de referência e pré-analítica.",
+        technique: "O exame precisa informar amostra, plataforma, protocolo, controle de qualidade e método de normalização. Isso é essencial para comparar pacientes e estudos.",
+        interpretation: "Valores acima ou abaixo da referência só têm sentido quando a direção esperada da doença e o ensaio usado estão claros.",
+        notes: "Use esta regra para todos os biomarcadores: antes de interpretar o número, pergunte de onde veio a amostra, como foi medida e qual processo biológico está sendo inferido."
+      },
+      atn: {
+        phys: "O eixo A representa beta-amiloide, o eixo T representa tau patológica e o eixo N representa neurodegeneração. Marcadores gliais, vasculares, sinápticos, genéticos, cognitivos e de fala complementam o modelo.",
+        technique: "A classificação pode usar fluido, imagem e testes funcionais. O valor do framework é separar biologia da doença, dano tecidual e expressão clínica.",
+        interpretation: "A positividade combinada em A e T aumenta a especificidade biológica para Alzheimer; N informa dano e estágio, mas é menos específico.",
+        notes: "Explique que Amiloide-Tau-Neurodegeneração (ATN) é uma gramática. Ela organiza pacientes por biologia e ajuda a entender por que sintomas iguais podem ter mecanismos diferentes."
+      },
+      amyloid: {
+        phys: "Este marcador pertence ao eixo amiloide. Ele informa produção, depuração ou deposição de peptídeos beta-amiloides, processo que pode começar anos antes dos sintomas.",
+        technique: "A mensuração pode ocorrer em líquido cefalorraquidiano (LCR), plasma ou imagem, dependendo do biomarcador. A fase pré-analítica e a plataforma analítica influenciam fortemente a comparação.",
+        interpretation: "Na Doença de Alzheimer, marcadores de deposição amiloide tendem a indicar maior retenção cerebral; em fluidos, a direção pode ser queda relativa de beta-amiloide 42 ou redução da razão beta-amiloide 42/beta-amiloide 40.",
+        notes: "Explique que amiloide não é sinônimo de demência. Ela mostra uma parte inicial da cascata biológica e precisa ser combinada com tau, dano neuronal e quadro clínico."
+      },
+      tau: {
+        phys: "Este marcador pertence ao eixo tau. A tau alterada se relaciona a emaranhados neurofibrilares, disfunção microtubular e propagação regional de patologia neuronal.",
+        technique: "A mensuração pode ser feita em líquido cefalorraquidiano (LCR), plasma por ensaios ultrassensíveis ou tomografia por emissão de pósitrons (PET) tau.",
+        interpretation: "Na Doença de Alzheimer, formas fosforiladas de tau e imagem tau tendem a aumentar. A distribuição regional e a combinação com amiloide melhoram a interpretação.",
+        notes: "Explique que tau aproxima a biologia da doença dos sintomas. Diferente da amiloide, sua carga regional costuma acompanhar melhor o comprometimento cognitivo."
+      },
+      neuro: {
+        phys: "Este biomarcador representa neurodegeneração, dano axonal, atrofia, hipometabolismo ou perda de integridade de redes. Ele mede consequência tecidual, não necessariamente etiologia específica.",
+        technique: "Pode ser obtido por sangue, líquido cefalorraquidiano (LCR), ressonância magnética, tomografia por emissão de pósitrons (PET) metabólica ou conectividade funcional.",
+        interpretation: "Na Doença de Alzheimer, marcadores de dano geralmente pioram com progressão, mas podem se alterar em outras doenças neurológicas, vasculares ou inflamatórias.",
+        notes: "Explique que o eixo N informa que o cérebro está sofrendo. Ele ajuda a estimar gravidade e progressão, mas não identifica sozinho a causa do sofrimento neuronal."
+      },
+      glial: {
+        phys: "Este marcador descreve resposta glial ou inflamatória. Astrócitos, micróglia e mediadores inflamatórios participam da reação do tecido cerebral à patologia.",
+        technique: "A avaliação usa líquido cefalorraquidiano (LCR), plasma ou imagem molecular. A interpretação exige controle de inflamação sistêmica, idade, doença vascular e outras condições neurológicas.",
+        interpretation: "Na Doença de Alzheimer, a tendência pode ser aumento de sinal glial ou inflamatório, mas especificidade diagnóstica isolada é limitada.",
+        notes: "Explique que esses marcadores mostram a resposta do tecido à agressão. Eles não substituem amiloide ou tau, mas ajudam a entender heterogeneidade e progressão."
+      },
+      vascular: {
+        phys: "Este marcador descreve integridade vascular, lesão de pequenos vasos, barreira hematoencefálica ou angiopatia amiloide cerebral. A vasculatura modula reserva cognitiva e progressão.",
+        technique: "A avaliação usa principalmente ressonância magnética, sequências sensíveis a susceptibilidade, imagem dinâmica com contraste ou quantificação volumétrica.",
+        interpretation: "Maior carga vascular pode piorar cognição e modificar o fenótipo clínico. Hipertensão, idade, anticoagulação e doença vascular sistêmica são confundidores centrais.",
+        notes: "Explique que Alzheimer e doença vascular podem coexistir. O marcador vascular ajuda a entender por que dois pacientes com biologia semelhante podem ter evolução funcional diferente."
+      },
+      synaptic: {
+        phys: "Este marcador descreve dano sináptico, densidade sináptica ou integridade de terminais pré e pós-sinápticos. Sinapses são diretamente relacionadas à eficiência cognitiva.",
+        technique: "A mensuração pode ocorrer em líquido cefalorraquidiano (LCR), plasma, vesículas extracelulares ou tomografia por emissão de pósitrons (PET) sináptica.",
+        interpretation: "Na Doença de Alzheimer, marcadores de dano sináptico podem subir em fluidos, enquanto imagem de densidade sináptica tende a cair em regiões afetadas.",
+        notes: "Explique que a sinapse é o ponto de comunicação entre neurônios. Dano sináptico ajuda a conectar biologia molecular a perda de função cognitiva."
+      },
+      genetic: {
+        phys: "Este marcador representa predisposição genética, risco familiar ou contribuição poligênica. Ele informa probabilidade, não estágio clínico atual.",
+        technique: "A avaliação usa genotipagem, painel genético ou sequenciamento. O resultado precisa de aconselhamento quando envolve risco familiar, início precoce ou variantes patogênicas.",
+        interpretation: "Genética pode aumentar ou reduzir risco, mas não substitui biomarcadores de amiloide, tau, neurodegeneração e avaliação clínica.",
+        notes: "Explique que risco genético não é diagnóstico. Ele muda probabilidade e contexto, mas precisa ser interpretado junto com idade, família e biomarcadores biológicos."
+      },
+      cognitive: {
+        phys: "Este marcador mede expressão funcional do comprometimento cognitivo. Ele não mostra diretamente amiloide ou tau; mostra impacto em memória, linguagem, função executiva ou autonomia.",
+        technique: "A avaliação usa teste cognitivo, escala clínica, entrevista com informante ou tarefa neuropsicológica padronizada, sempre considerando escolaridade, cultura, idioma e déficits sensoriais.",
+        interpretation: "Na Doença de Alzheimer, escores tendem a piorar com progressão, mas desempenho baixo pode refletir outras causas, como depressão, baixa escolaridade, sono ou doença vascular.",
+        notes: "Explique que testes cognitivos mostram como a biologia aparece na vida mental do paciente. Eles são essenciais para função, mas não definem etiologia isoladamente."
+      },
+      speech: {
+        phys: "Este marcador mede alterações acústicas, temporais, lexicais ou discursivas da fala. A fala integra memória, linguagem, execução motora, atenção e planejamento.",
+        technique: "A avaliação usa gravação de áudio, segmentação temporal, transcrição, análise acústica e processamento de linguagem natural, com controle de idioma, tarefa, microfone e ruído.",
+        interpretation: "Na Doença de Alzheimer, pode haver redução de fluência, conteúdo e diversidade, com aumento de pausas, disfluências, termos vagos, anomia e circunlóquios.",
+        notes: "Explique que fala é uma janela funcional. Ela não substitui biomarcadores biológicos, mas revela como o declínio cognitivo se expressa em comunicação real."
+      }
+    };
+
+    const slides = [
+      ["Panorama dos Biomarcadores da Doença de Alzheimer", "Introdução geral", "Estrutura Amiloide-Tau-Neurodegeneração (ATN) e marcadores complementares", "s1", "Biomarcador → fenômeno fisiopatológico → métrica mensurável", "Biomarcador = variável observável; fenômeno fisiopatológico = processo biológico ou funcional representado; métrica mensurável = valor, razão, escore ou imagem usado para quantificar o fenômeno.", ""],
+      ["Estrutura Padronizada de Análise", "Metodologia de leitura", "Aplicável a Amiloide-Tau-Neurodegeneração (ATN) e não-ATN", "s2", "Zx = (x - μcontrole) / σcontrole", "Zx = escore padronizado; x = valor do paciente; μcontrole = média de controles; σcontrole = desvio-padrão dos controles.", ""],
+      ["Framework Amiloide-Tau-Neurodegeneração (ATN)", "Classificação conceitual", "A, T, N e complementares", "s3", "Perfil = A(+/-), T(+/-), N(+/-)", "A = beta-amiloide; T = tau patológica; N = neurodegeneração; + = positivo; - = negativo.", ""],
+      ["Beta-amiloide 42 (Aβ42)", "Biomarcadores amiloides", "Categoria A", "s4", "C_Aβ42 = concentração de Aβ42", "C_Aβ42 = concentração medida de beta-amiloide 42; Aβ42 = peptídeo beta-amiloide com 42 aminoácidos.", ""],
+      ["Beta-amiloide 40 (Aβ40)", "Biomarcadores amiloides", "Categoria A quando usada em razão", "s5", "C_Aβ40 = concentração de Aβ40", "C_Aβ40 = concentração medida de beta-amiloide 40; Aβ40 = peptídeo beta-amiloide com 40 aminoácidos.", ""],
+      ["Razão Beta-amiloide 42/Beta-amiloide 40 (Aβ42/Aβ40)", "Biomarcadores amiloides", "Categoria A", "s6", "R_Aβ = Aβ42 / Aβ40", "R_Aβ = razão amiloide; Aβ42 = beta-amiloide 42; Aβ40 = beta-amiloide 40.", ""],
+      ["Tomografia por Emissão de Pósitrons Amiloide (PET Amiloide)", "Imagem amiloide", "Categoria A", "s7", "Razão de Valor de Captação Padronizado (SUVR) = captação_região_alvo / captação_região_referência", "SUVR = razão de valor de captação padronizado; região-alvo = córtex avaliado; região de referência = base comparativa.", ""],
+      ["Tau Fosforilada em Treonina 181 (p-tau181)", "Biomarcadores tau", "Categoria T", "s8", "C_pτ181 = concentração de p-tau181; R_pτ181/Aβ42 = pτ181 / Aβ42", "C_pτ181 = concentração de tau fosforilada 181; R = razão; pτ181 = p-tau181; Aβ42 = beta-amiloide 42.", ""],
+      ["Tau Fosforilada em Treonina 217 (p-tau217)", "Biomarcadores tau", "Categoria T", "s9", "C_pτ217 = concentração de p-tau217", "C_pτ217 = concentração de tau fosforilada em treonina 217.", ""],
+      ["Tau Fosforilada em Treonina 231 (p-tau231)", "Biomarcadores tau", "Categoria T", "s10", "C_pτ231 = concentração de p-tau231", "C_pτ231 = concentração de tau fosforilada em treonina 231.", ""],
+      ["Tau Total (t-tau)", "Tau e dano neuronal", "Categoria N quando usada como dano neuronal", "s11", "C_tτ = concentração de tau total; R_tτ/Aβ42 = tτ / Aβ42", "C_tτ = concentração de tau total; R_tτ/Aβ42 = razão entre tau total e beta-amiloide 42; tτ = tau total; Aβ42 = beta-amiloide 42.", ""],
+      ["Tomografia por Emissão de Pósitrons Tau (PET Tau)", "Imagem tau", "Categoria T", "s12", "Razão de Valor de Captação Padronizado para tau (SUVR_tau) = SUV_região_alvo / SUV_região_referência", "SUVR_tau = razão de valor de captação padronizado para tau; SUV_região_alvo = valor de captação padronizado na região avaliada; SUV_região_referência = valor de captação padronizado na região de referência.", ""],
+      ["Neurofilamento de Cadeia Leve (NfL)", "Dano axonal", "Categoria N", "s13", "C_NfL = concentração de NfL", "C_NfL = concentração de neurofilamento de cadeia leve; NfL = proteína estrutural de axônios.", ""],
+      ["Volume Hipocampal", "Neuroimagem estrutural", "Categoria N", "s14", "V_hip,norm = V_hipocampo / V_intracraniano; ΔV_hip = ((V_t2 - V_t1) / V_t1) × 100", "V_hip,norm = volume hipocampal normalizado; V_hipocampo = volume do hipocampo; V_intracraniano = volume intracraniano; ΔV_hip = variação longitudinal do volume hipocampal; V_t2 = volume no segundo tempo; V_t1 = volume no primeiro tempo.", ""],
+      ["Espessura Cortical", "Neuroimagem estrutural", "Categoria N", "s15", "CT_região = (1 / N) × Σ(i=1 até N) CT_i", "CT_região = espessura cortical média regional; N = número de pontos ou vértices avaliados; Σ = soma; CT_i = espessura cortical no ponto i.", ""],
+      ["Tomografia por Emissão de Pósitrons com Fluordesoxiglicose (FDG-PET)", "Imagem metabólica", "Categoria N", "s16", "Razão de Valor de Captação Padronizado para fluorodesoxiglicose (SUVR_FDG) = SUV_região_alvo / SUV_região_referência", "SUVR_FDG = razão de valor de captação padronizado para fluorodesoxiglicose; SUV_região_alvo = valor de captação padronizado na região avaliada; SUV_região_referência = valor de captação padronizado na região de referência.", ""],
+      ["Imagem por Tensor de Difusão em Ressonância Magnética (DTI-MRI)", "Conectividade estrutural", "Categoria N ou complementar", "s17", "Anisotropia Fracionada (FA) = √(3/2) × √((λ1-λ̄)² + (λ2-λ̄)² + (λ3-λ̄)²) / √(λ1² + λ2² + λ3²)", "FA = anisotropia fracionada; λ1, λ2 e λ3 = autovalores de difusão; λ̄ = média dos autovalores; √ = raiz quadrada.", ""],
+      ["Conectividade Funcional em Repouso", "Neuroimagem funcional", "Não-ATN", "s18", "FC_ij = corr(s_i(t), s_j(t))", "FC_ij = conectividade funcional entre as regiões i e j; corr = correlação; s_i(t) = série temporal da região i; s_j(t) = série temporal da região j; t = tempo.", ""],
+      ["Proteína Ácida Fibrilar Glial (GFAP)", "Glial e inflamatório", "Não-ATN", "s19", "C_GFAP = concentração de GFAP", "C_GFAP = concentração da proteína ácida fibrilar glial; GFAP = marcador astrocitário.", ""],
+      ["Chitinase-3-like Protein 1 (YKL-40)", "Glial e inflamatório", "Não-ATN", "s20", "C_YKL40 = concentração de YKL-40", "C_YKL40 = concentração de chitinase-3-like protein 1; YKL-40 = proteína inflamatória/glial.", ""],
+      ["Tomografia por Emissão de Pósitrons da Proteína Translocadora de 18 kDa (TSPO PET)", "Neuroinflamação por imagem", "Não-ATN", "s21", "Razão de Valor de Captação Padronizado para proteína translocadora de 18 kDa (SUVR_TSPO) = SUV_região_alvo / SUV_referência", "SUVR_TSPO = razão de valor de captação padronizado para proteína translocadora de 18 kDa; SUV_região_alvo = valor de captação padronizado na região avaliada; SUV_referência = valor de captação padronizado na região de referência.", ""],
+      ["Micro-hemorragias e Angiopatia Amiloide Cerebral", "Vascular", "Não-ATN", "s22", "M_micro = n_micro-hemorragias", "M_micro = métrica de micro-hemorragias; n_micro-hemorragias = número de micro-hemorragias contadas por topografia.", ""],
+      ["Lesões de Substância Branca", "Vascular", "Não-ATN", "s23", "V_WMH = Σ(i=1 até N) v_i", "V_WMH = volume total de lesões de substância branca; Σ = soma; N = número de lesões ou voxels segmentados; v_i = volume do elemento i.", ""],
+      ["Permeabilidade da Barreira Hematoencefálica (BHE)", "Vascular e barreira", "Não-ATN", "s24", "B_vascular = [n_micro-hemorragias, V_lesões, P_BHE]", "B_vascular = vetor vascular; n_micro-hemorragias = número de micro-hemorragias; V_lesões = volume de lesões; P_BHE = estimativa de permeabilidade da barreira hematoencefálica.", ""],
+      ["Neurogranin", "Sináptico", "Não-ATN", "s25", "C_Ng = concentração de neurogranin", "C_Ng = concentração de neurogranin; Ng = neurogranin, proteína pós-sináptica.", ""],
+      ["Beta-synuclein", "Sináptico", "Não-ATN", "s26", "C_βsyn = concentração de beta-synuclein", "C_βsyn = concentração de beta-synuclein; βsyn = beta-synuclein.", ""],
+      ["Tomografia por Emissão de Pósitrons da Proteína 2A de Vesícula Sináptica (SV2A PET)", "Imagem sináptica", "Não-ATN", "s27", "Razão de Valor de Captação Padronizado para SV2A (SUVR_SV2A) = SUV_região_alvo / SUV_referência", "SUVR_SV2A = razão de valor de captação padronizado para proteína 2A de vesícula sináptica; SUV_região_alvo = valor de captação padronizado na região avaliada; SUV_referência = valor de captação padronizado na região de referência.", ""],
+      ["Apolipoproteína E Épsilon 4 (APOE-ε4)", "Genético", "Não-ATN", "s28", "g_ε4 ∈ {0, 1, 2}", "g_ε4 = dose alélica de apolipoproteína E épsilon 4; 0 = nenhuma cópia; 1 = uma cópia; 2 = duas cópias; ∈ = pertence ao conjunto.", ""],
+      ["Apolipoproteína E Épsilon 2 (APOE-ε2)", "Genético", "Não-ATN", "s29", "g_ε2 ∈ {0, 1, 2}", "g_ε2 = dose alélica de apolipoproteína E épsilon 2; 0 = nenhuma cópia; 1 = uma cópia; 2 = duas cópias; ∈ = pertence ao conjunto.", ""],
+      ["Escore de Risco Poligênico (PRS) e PRS sem Apolipoproteína E", "Genético", "Não-ATN", "s30", "PRS = Σ(j=1 até n) β_j x_j; PRS_noAPOE = Σ(j não pertencente a APOE) β_j x_j", "PRS = escore poligênico de risco; PRS_noAPOE = PRS sem a região da apolipoproteína E; Σ = soma; β_j = peso da variante j; x_j = genótipo ou dosagem da variante j; n = número de variantes.", ""],
+      ["Proteína Precursora Amiloide, Presenilina 1 e Presenilina 2 (APP, PSEN1 e PSEN2)", "Genético monogênico", "Não-ATN", "s31", "m_gene ∈ {0, 1}", "m_gene = variável binária para mutação patogênica no gene avaliado; 0 = ausência; 1 = presença; ∈ = pertence ao conjunto.", ""],
+      ["Mini-Exame do Estado Mental (MMSE)", "Cognitivo", "Não-ATN", "s32", "MMSE = Σ(i=1 até n) p_i; varia de 0 a 30", "MMSE = pontuação total do Mini-Exame do Estado Mental; Σ = soma; p_i = ponto obtido no item i; n = número de itens; 0 = pior desempenho; 30 = melhor desempenho.", ""],
+      ["Avaliação Cognitiva de Montreal (MoCA)", "Cognitivo", "Não-ATN", "s33", "MoCA = Σ(i=1 até n) p_i; varia de 0 a 30", "MoCA = pontuação total da Avaliação Cognitiva de Montreal; Σ = soma; p_i = ponto obtido no item i; n = número de itens; 0 = pior desempenho; 30 = melhor desempenho.", ""],
+      ["Clinical Dementia Rating (CDR)", "Escala clínica funcional", "Não-ATN", "s34", "CDR ∈ {0, 0,5, 1, 2, 3}", "CDR = Clinical Dementia Rating; 0 = controle/normal; 0,5 = comprometimento questionável ou muito leve; 1, 2 e 3 = demência leve, moderada e grave; ∈ = pertence ao conjunto.", ""],
+      ["Memória Episódica", "Neuropsicológico", "Não-ATN", "s35", "RecallRate = N_itens_lembrados / N_itens_apresentados", "RecallRate = taxa de recordação; N_itens_lembrados = número de itens recordados; N_itens_apresentados = número de itens apresentados.", ""],
+      ["Fluência Verbal", "Neuropsicológico e linguagem", "Não-ATN", "s36", "FV = N_palavras_corretas / T; RepetitionRate = N_repetições / N_palavras_totais", "FV = fluência verbal; N_palavras_corretas = número de palavras válidas; T = tempo da tarefa; RepetitionRate = taxa de repetição; N_repetições = número de repetições; N_palavras_totais = total de palavras produzidas.", ""],
+      ["Frequência Fundamental (F0)", "Acústico de fala", "Não-ATN", "s37", "F0_médio = (1 / N) × Σ(i=1 até N) F0_i; Var(F0) = (1 / N) × Σ(i=1 até N)(F0_i - F0_médio)²", "F0_médio = média da frequência fundamental; N = número de medidas; Σ = soma; F0_i = frequência fundamental no ponto i; Var(F0) = variância da frequência fundamental.", ""],
+      ["Jitter", "Acústico de fala", "Não-ATN", "s38", "Jitter_local = ((1 / (N - 1)) × Σ(i=1 até N-1) |T_i - T_i+1|) / ((1 / N) × Σ(i=1 até N) T_i)", "Jitter_local = irregularidade temporal relativa; N = número de ciclos glotais; Σ = soma; T_i = duração do ciclo i; T_i+1 = duração do ciclo seguinte; | | = valor absoluto.", ""],
+      ["Shimmer", "Acústico de fala", "Não-ATN", "s39", "Shimmer_local = ((1 / (N - 1)) × Σ(i=1 até N-1) |A_i - A_i+1|) / ((1 / N) × Σ(i=1 até N) A_i)", "Shimmer_local = irregularidade relativa de amplitude; N = número de ciclos glotais; Σ = soma; A_i = amplitude do ciclo i; A_i+1 = amplitude do ciclo seguinte; | | = valor absoluto.", ""],
+      ["Coeficientes Cepstrais em Frequência Mel (MFCC)", "Acústico espectral", "Não-ATN", "s40", "MFCC = [c1, c2, ..., cK]; c_n = Σ(m=1 até M) log(E_m) cos[(πn/M)(m - 1/2)]", "MFCC = vetor de coeficientes cepstrais em frequência Mel; c_n = coeficiente n; K = número de coeficientes; Σ = soma; M = número de filtros Mel; E_m = energia no filtro Mel m; cos = cosseno.", ""],
+      ["Taxa de Fala e Taxa de Articulação", "Temporal de fala", "Não-ATN", "s41", "SpeechRate = N_palavras / T_total; ArticulationRate = N_sílabas / T_fala", "SpeechRate = taxa de fala; N_palavras = número de palavras; T_total = tempo total incluindo pausas; ArticulationRate = taxa de articulação; N_sílabas = número de sílabas; T_fala = tempo dos trechos falados.", ""],
+      ["Pausas e Disfluências", "Temporal e discursivo", "Não-ATN", "s42", "PauseRatio = T_silêncio / T_total; DisfluencyRate = N_disfluências / N_palavras", "PauseRatio = proporção de pausas; T_silêncio = tempo em silêncio; T_total = tempo total; DisfluencyRate = taxa de disfluências; N_disfluências = número de disfluências; N_palavras = número de palavras.", ""],
+      ["Diversidade Lexical", "Lexical", "Não-ATN", "s43", "TTR = N_palavras_únicas / N_palavras_totais; MATTR = (1 / K) × Σ(k=1 até K) TTR_k", "TTR = Type-Token Ratio; N_palavras_únicas = número de palavras distintas; N_palavras_totais = total de palavras; MATTR = Moving-Average Type-Token Ratio; K = número de janelas; TTR_k = TTR da janela k.", ""],
+      ["Conteúdo Informacional", "Discursivo", "Não-ATN", "s44", "IC = N_unidades_informacionais / N_palavras", "IC = conteúdo informacional; N_unidades_informacionais = número de unidades informacionais; N_palavras = número total de palavras.", ""],
+      ["Coerência Semântica", "Semântico-discursivo", "Não-ATN", "s45", "Coerência(s_i, s_i+1) = cos(s_i, s_i+1) = (s_i · s_i+1) / (||s_i|| ||s_i+1||)", "Coerência(s_i, s_i+1) = similaridade semântica entre segmentos adjacentes; cos = cosseno; s_i = vetor semântico do segmento i; s_i+1 = vetor do segmento seguinte; · = produto escalar; || || = norma do vetor.", ""],
+      ["Entropia Lexical", "Lexical avançado", "Não-ATN", "s46", "H = -Σ(i=1 até V) p(w_i) log p(w_i); p(w_i) = freq(w_i) / N; H_norm = H / log(V)", "H = entropia lexical; Σ = soma; V = número de palavras distintas; p(w_i) = probabilidade da palavra i; freq(w_i) = frequência da palavra i; N = número total de palavras; H_norm = entropia normalizada.", ""],
+      ["Measure of Textual Lexical Diversity, Hypergeometric Distribution D e vocd-D (MTLD, HD-D e vocd-D)", "Lexical avançado", "Não-ATN", "s47", "MTLD = N_tokens / N_fatores; HD-D = (1/42) × Σ(i=1 até V)[1 - C(N-f_i,42)/C(N,42)]; TTR(n) = (D/n)(√(1 + 2n/D) - 1)", "MTLD = Measure of Textual Lexical Diversity; N_tokens = número de tokens; N_fatores = segmentos até o limiar de TTR; HD-D = Hypergeometric Distribution D; V = vocabulário; f_i = frequência da palavra i; C = combinação; vocd-D = parâmetro D ajustado à curva TTR(n).", ""],
+      ["Densidade de Ideias", "Discursivo avançado", "Não-ATN", "s48", "ID = N_ideias / N_palavras; ID_10 = (N_ideias / N_palavras) × 10; InfoScore = N_unidades_relevantes / N_unidades_esperadas", "ID = densidade de ideias; N_ideias = número de ideias; N_palavras = número de palavras; ID_10 = densidade por 10 palavras; InfoScore = escore informacional; N_unidades_relevantes = unidades relevantes; N_unidades_esperadas = unidades esperadas.", ""],
+      ["Razão Pronome/Substantivo", "Lexical-discursivo", "Não-ATN", "s49", "R_pro/sub = N_pronomes / N_substantivos; P_pronome = N_pronomes / (N_pronomes + N_substantivos); R_vago = N_termos_vagos / N_palavras", "R_pro/sub = razão pronome/substantivo; N_pronomes = número de pronomes; N_substantivos = número de substantivos; P_pronome = proporção de pronomes; R_vago = taxa de termos vagos; N_termos_vagos = número de termos vagos; N_palavras = número de palavras.", ""],
+      ["Taxa de Anomia e Circunlóquios", "Linguístico-cognitivo", "Não-ATN", "s50", "AnomiaRate = N_falhas_nomeação / N_oportunidades_nomeação; CircRate = N_circunlóquios / N_palavras; LexicalRetrievalFailure = (N_anomia + N_circunlóquios + N_termos_vagos) / N_palavras", "AnomiaRate = taxa de anomia; N_falhas_nomeação = falhas de nomeação; N_oportunidades_nomeação = oportunidades de nomeação; CircRate = taxa de circunlóquios; N_circunlóquios = número de circunlóquios; LexicalRetrievalFailure = falha de recuperação lexical; N_anomia = eventos de anomia; N_termos_vagos = termos vagos; N_palavras = número de palavras.", ""],
+    ];
+
+    function esc(text) {
+      return String(text).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;" }[ch]));
+    }
+
+    function renderSlide(item, index) {
+      const [title, group, atn, profileName, formula, legend, detail] = item;
+      const profile = profiles[profileName];
+      if (index < 3) {
+        return `
+        <article class="slide intro-slide${index === 0 ? " active" : ""}" id="slide-${index + 1}">
+          <div class="slide-topline"><span>Slide ${index + 1}</span><span>${esc(group)}</span></div>
+          <h1 class="slide-title">${esc(title)}</h1>
+          <div class="categorization"><strong>Categorização:</strong> ${esc(group)} | <strong>Classificação:</strong> ${esc(atn)}</div>
+          <div class="intro-panel">
+            <section class="intro-lead">
+              <p>${esc(profile.phys)}</p>
+              <p>${esc(profile.technique)}</p>
+              <div class="intro-note"><strong>Notas do Orador:</strong> ${esc(profile.notes)}</div>
+            </section>
+            <aside class="intro-highlight">
+              <h3>Ideia central</h3>
+              <p>${esc(profile.interpretation)}</p>
+              <h3>Métrica-chave</h3>
+              <p><span class="formula-text">${esc(formula)}</span></p>
+              <p><strong>Legenda da Fórmula:</strong> ${esc(legend)}</p>
+            </aside>
+          </div>
+        </article>`;
+      }
+      return `
+        <article class="slide${index === 0 ? " active" : ""}" id="slide-${index + 1}">
+          <div class="slide-topline"><span>Slide ${index + 1}</span><span>${esc(group)}</span></div>
+          <h1 class="slide-title">${esc(title)}</h1>
+          <div class="categorization"><strong>Categorização:</strong> ${esc(group)} | <strong>Classificação:</strong> ${esc(atn)}</div>
+          <div class="main-grid">
+            <div class="field"><h3>Fisiopatologia</h3><p>${esc(profile.phys)} ${esc(detail)}</p></div>
+            <div class="field"><h3>Exame/Técnica</h3><p>${esc(profile.technique)}</p></div>
+            <div class="field"><h3>Métrica/Fórmula</h3><p><span class="formula-text">${esc(formula)}</span></p></div>
+            <div class="field"><h3>Interpretação</h3><p>${esc(profile.interpretation)} ${esc(detail)}</p></div>
+          </div>
+          <div class="notes">
+            <div><h3>Notas do Orador</h3><p>${esc(profile.notes)} ${esc(detail)}</p></div>
+            <div><h3>Legenda da Fórmula</h3><p>${esc(legend)}</p></div>
+          </div>
+        </article>`;
+    }
+
+    const root = document.getElementById("slides");
+    root.innerHTML = slides.map(renderSlide).join("");
+
+    const slideEls = Array.from(document.querySelectorAll(".slide"));
+    let current = 0;
+    document.getElementById("total").textContent = slideEls.length;
+
+    function update() {
+      slideEls.forEach((slide, index) => slide.classList.toggle("active", index === current));
+      document.getElementById("current").textContent = current + 1;
+      document.getElementById("prev").disabled = current === 0;
+      document.getElementById("next").disabled = current === slideEls.length - 1;
+      document.getElementById("progress").style.width = `${slideEls.length <= 1 ? 100 : (current / (slideEls.length - 1)) * 100}%`;
+    }
+
+    function go(delta) {
+      current = Math.max(0, Math.min(slideEls.length - 1, current + delta));
+      update();
+    }
+
+    document.getElementById("prev").addEventListener("click", () => go(-1));
+    document.getElementById("next").addEventListener("click", () => go(1));
+    document.addEventListener("keydown", event => {
+      if (event.key === "ArrowRight" || event.key === " ") go(1);
+      if (event.key === "ArrowLeft") go(-1);
+    });
+    update();
+  </script>
+</body>
+</html>
